@@ -1,0 +1,42 @@
+version: "3.8"
+
+services:
+    api:
+        build: ./api-treinamento-node
+        container_name: api_service
+        ports:
+            - "3001:3001"
+        volumes:
+            - ./api-treinamento-node:/app
+            - /app/node_modules
+        depends_on:
+            - db
+        environment:
+            - DATABASE_URL=postgresql://docker:docker@db:5432/treinamento_api?schema=public
+
+    frontend:
+        build: ./web-treinamento-react
+        container_name: frontend_service
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./web-treinamento-react:/app
+            - /app/node_modules
+            - /app/.next
+        depends_on:
+            - api
+
+    db:
+        image: postgres:14-alpine
+        container_name: db_service
+        ports:
+            - "5433:5432"
+        environment:
+            - POSTGRES_USER=docker
+            - POSTGRES_PASSWORD=docker
+            - POSTGRES_DB=treinamento_api
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+
+volumes:
+    pgdata:

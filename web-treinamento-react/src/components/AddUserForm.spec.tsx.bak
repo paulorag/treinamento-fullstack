@@ -1,0 +1,21 @@
+import { render, screen, fireEvent } from "@testing-library/react";
+import { AddUserForm } from "./AddUserForm";
+import "@testing-library/jest-dom";
+import { describe, it } from "node:test";
+import { vi } from "vitest";
+
+describe("AddUserForm", () => {
+    it("deve chamar a função onAddUser com o nome digitado quando o formulário é submetido", () => {
+        const mockOnAddUser = vi.fn();
+
+        render(<AddUserForm onAddUser={mockOnAddUser} />);
+
+        const input = screen.getByPlaceholderText(/nome do usuário/i);
+        const button = screen.getByRole("button", { name: /adicionar/i });
+
+        fireEvent.change(input, { target: { value: "Usuário Teste" } });
+        fireEvent.click(button);
+
+        expect(mockOnAddUser).toHaveBeenCalledWith("Usuário Teste");
+    });
+});

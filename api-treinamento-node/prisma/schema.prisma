@@ -1,0 +1,16 @@
+// Define o cliente que será gerado (para usarmos no código)
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Define a fonte de dados, lendo a URL do arquivo .env
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// "Desenha" nossa tabela de Usuários
+model User {
+  id    Int     @id @default(autoincrement())
+  nome  String
+}
