@@ -68,3 +68,4 @@ module.exports = {
     updateUser,
     deleteUser,
 };
+// Testando o workflow de CI.
