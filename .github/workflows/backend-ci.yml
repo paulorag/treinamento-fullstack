@@ -1,0 +1,38 @@
+name: Backend CI
+
+on:
+    pull_request:
+        branches:
+            - main
+        paths:
+            - "api-treinamento-node/**"
+            - "docker-compose.yml"
+jobs:
+    test-backend:
+        runs-on: ubuntu-latest
+        env:
+            DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        defaults:
+            run:
+                working-directory: ./api-treinamento-node
+        steps:
+            - name: Checkout código
+              uses: actions/checkout@v4
+
+            - name: Iniciar ambiente com Docker Compose
+              working-directory: ./
+              run: docker compose up -d
+
+            - name: Rodar a migração do Prisma
+              run: docker compose exec api npx prisma migrate dev --name test-migration
+              working-directory: ./
+
+            - name: Rodar os testes
+              run: docker compose exec api npm test
+              working-directory: ./
+
+            - name: Parar os containers
+              # 'if: always()' garante que este passo sempre rode, mesmo se os testes falharem
+              if: always()
+              working-directory: ./
+              run: docker compose down

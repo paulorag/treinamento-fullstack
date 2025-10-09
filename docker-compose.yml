@@ -10,7 +10,8 @@ services:
             - ./api-treinamento-node:/app
             - /app/node_modules
         depends_on:
-            - db
+            db:
+                condition: service_healthy
         environment:
             - DATABASE_URL=postgresql://docker:docker@db:5432/treinamento_api?schema=public
 
@@ -37,6 +38,11 @@ services:
             - POSTGRES_DB=treinamento_api
         volumes:
             - pgdata:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U docker -d treinamento_api"]
+            interval: 10s
+            timeout: 5s
+            retries: 5
 
 volumes:
     pgdata:
