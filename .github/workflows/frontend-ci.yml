@@ -1,0 +1,35 @@
+# Nome do workflow
+name: Frontend CI
+
+on:
+    pull_request:
+        branches:
+            - main
+        paths:
+            - "web-treinamento-react/**"
+            - ".github/workflows/frontend-ci.yml"
+
+jobs:
+    lint-frontend:
+        runs-on: ubuntu-latest
+
+        defaults:
+            run:
+                working-directory: ./web-treinamento-react
+
+        steps:
+            - name: Checkout código
+              uses: actions/checkout@v4
+
+            - name: Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: "18"
+                  cache: "npm"
+                  cache-dependency-path: web-treinamento-react/package-lock.json
+
+            - name: Instalar dependências
+              run: npm ci
+
+            - name: Rodar ESLint
+              run: npm run lint
