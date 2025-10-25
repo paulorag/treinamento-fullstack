@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, use } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { UserItem } from "./UserItem";
 import { AddUserForm } from "./AddUserForm";
+import { Modal } from "./Modal";
 import toast from "react-hot-toast";
 
 interface User {
@@ -14,6 +15,7 @@ export function UserList() {
     const [users, setUsers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     const fetchUsers = useCallback(async () => {
         setIsLoading(true);
@@ -52,6 +54,7 @@ export function UserList() {
             );
             if (!response.ok) throw new Error("Falha ao adicionar usuário");
             toast.success("Usuário adicionado com sucesso!");
+            setIsAddModalOpen(false);
             fetchUsers();
         } catch (err) {
             const errorMessage =
@@ -120,24 +123,19 @@ export function UserList() {
 
     return (
         <div className="w-full max-w-2xl p-4 bg-gray-800 rounded-lg space-y-4">
-            <AddUserForm onAddUser={handleAddUser} />
+            <div className="text-right">
+                <button
+                    onClick={() => setIsAddModalOpen(true)}
+                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                >
+                    Adicionar Usuário
+                </button>
+            </div>
 
             <div>
                 <h2 className="text-xl font-semibold text-white mb-4">
                     Lista de Usuários da API
                 </h2>
-
-                {/* 6. Renderização condicional baseada no estado */}
-                {isLoading && (
-                    <p className="text-center text-gray-400">
-                        Carregando usuários...
-                    </p>
-                )}
-
-                {error && (
-                    <p className="text-center text-red-500">Erro: {error}</p>
-                )}
-
                 {!isLoading && !error && (
                     <ul>
                         {users.map((user) => (
@@ -151,6 +149,16 @@ export function UserList() {
                     </ul>
                 )}
             </div>
+            <Modal
+                isOpen={isAddModalOpen}
+                onRequestClose={() => setIsAddModalOpen(false)}
+                contentLabel="Adicionar Novo Usuário"
+            >
+                <AddUserForm
+                    onAddUser={handleAddUser}
+                    onRequestClose={() => setIsAddModalOpen(false)}
+                />
+            </Modal>
         </div>
     );
 }
