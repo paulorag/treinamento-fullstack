@@ -19,7 +19,7 @@ export function AddUserForm({ onAddUser }: AddUserFormProps) {
         <form onSubmit={handleSubmit} className=" flex gap-2 w-full max-w-2xl">
             <input
                 type="text"
-                placeholder="Nome do novo usuário"
+                placeholder="Nome do usuário"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="bg-gray-700 text-white rounded px-2 py-1 flex-grow"

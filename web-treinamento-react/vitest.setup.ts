@@ -1,1 +1,1 @@
-import "@testing-library/jest-dom/vitest";
+import "@testing-library/jest-dom"; // Estende o expect com matchers do DOM
