@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, use } from "react";
 import { UserItem } from "./UserItem";
 import { AddUserForm } from "./AddUserForm";
+import toast from "react-hot-toast";
 
 interface User {
     id: number;
@@ -39,6 +40,7 @@ export function UserList() {
     const handleAddUser = async (name: string) => {
         setIsLoading(true);
         setError(null);
+        const loadingToastId = toast.loading("Adicionando usuário...");
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/users`,
@@ -49,17 +51,23 @@ export function UserList() {
                 }
             );
             if (!response.ok) throw new Error("Falha ao adicionar usuário");
+            toast.success("Usuário adicionado com sucesso!");
             fetchUsers();
         } catch (err) {
-            console.error("Falha ao adicionar usuário:", err);
-            setError(err instanceof Error ? err.message : "Erro desconhecido");
+            const errorMessage =
+                err instanceof Error ? err.message : "Erro desconhecido";
+            toast.error(`Erro: ${errorMessage}`);
+            setError(errorMessage);
             setIsLoading(false);
+        } finally {
+            toast.dismiss(loadingToastId);
         }
     };
 
     const handleUpdate = async (id: number, newName: string) => {
         setIsLoading(true);
         setError(null);
+        const loadingToastId = toast.loading("Atualizando usuário...");
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/users/${id}`,
@@ -72,17 +80,23 @@ export function UserList() {
                 }
             );
             if (!response.ok) throw new Error("Falha ao atualizar usuário");
+            toast.success("Usuário atualizado com sucesso!");
             fetchUsers();
         } catch (err) {
-            console.error("Falha ao atualizar usuário:", err);
-            setError(err instanceof Error ? err.message : "Erro desconhecido");
+            const errorMessage =
+                err instanceof Error ? err.message : "Erro desconhecido";
+            toast.error(`Erro: ${errorMessage}`);
+            setError(errorMessage);
             setIsLoading(false);
+        } finally {
+            toast.dismiss(loadingToastId);
         }
     };
 
     const handleDelete = async (id: number) => {
         setIsLoading(true);
         setError(null);
+        const loadingToastId = toast.loading("Deletando usuário...");
         try {
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_API_URL}/users/${id}`,
@@ -91,11 +105,16 @@ export function UserList() {
                 }
             );
             if (!response.ok) throw new Error("Falha ao deletar usuário");
+            toast.success("Usuário deletado com sucesso!");
             fetchUsers();
         } catch (err) {
-            console.error("Falha ao deletar usuário:", err);
-            setError(err instanceof Error ? err.message : "Erro desconhecido");
+            const errorMessage =
+                err instanceof Error ? err.message : "Erro desconhecido";
+            toast.error(`Erro: ${errorMessage}`);
+            setError(errorMessage);
             setIsLoading(false);
+        } finally {
+            toast.dismiss(loadingToastId);
         }
     };
 
